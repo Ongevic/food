@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Health Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green:       #2d6a4f;
+    --green-mid:   #52b788;
+    --green-light: #d8f3dc;
+    --green-pale:  #f0faf2;
+    --orange:      #e07a3a;
+    --yellow:      #f9c74f;
+    --dark:        #1a2e1c;
+    --mid:         #4a6350;
+    --grey:        #f5f7f5;
+    --white:       #ffffff;
+    --radius:      12px;
+    --shadow:      0 4px 24px rgba(45,106,79,0.10);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--grey);
+    color: var(--dark);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--green) 0%, #1b4332 100%);
+    color: var(--white);
+    padding: 72px 24px 56px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 70% 30%, rgba(82,183,136,0.25) 0%, transparent 60%);
+  }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 50px;
+    padding: 4px 16px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .hero p {
+    font-size: 1.05rem;
+    opacity: 0.85;
+    max-width: 520px;
+    margin: 0 auto 32px;
+    position: relative;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .stat {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: var(--radius);
+    padding: 12px 20px;
+    min-width: 110px;
+  }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; }
+  .stat-lbl { font-size: 11px; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--white);
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    padding: 0 24px;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav ul { display: inline-flex; gap: 0; list-style: none; }
+  nav a {
+    display: inline-block;
+    padding: 16px 18px;
+    color: var(--mid);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  nav a:hover, nav a.active {
+    color: var(--green);
+    border-bottom-color: var(--green);
+  }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 20px 80px; }
+  section { margin-bottom: 64px; scroll-margin-top: 60px; }
+
+  /* ── SECTION HEADERS ── */
+  .sec-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--green-light);
+  }
+  .sec-icon {
+    width: 40px; height: 40px;
+    background: var(--green);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .sec-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--dark);
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--green);
+    margin-bottom: 12px;
+  }
+
+  /* ── TABLES ── */
+  .table-wrap { overflow-x: auto; border-radius: var(--radius); box-shadow: var(--shadow); }
+  table { width: 100%; border-collapse: collapse; background: var(--white); font-size: 13.5px; }
+  thead tr { background: var(--green); color: var(--white); }
+  thead th { padding: 12px 14px; text-align: left; font-weight: 500; font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase; }
+  tbody tr:nth-child(even) { background: var(--green-pale); }
+  tbody tr:hover { background: var(--green-light); transition: background 0.15s; }
+  td { padding: 11px 14px; vertical-align: top; border-bottom: 1px solid #eef2ee; }
+  td:first-child { font-weight: 500; color: var(--green); }
+
+  /* ── MEAL GRID ── */
+  .meal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .meal-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .meal-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(45,106,79,0.15); }
+  .meal-card-head {
+    background: var(--green);
+    color: var(--white);
+    padding: 14px 16px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .meal-card-body { padding: 16px; }
+  .meal-row { margin-bottom: 10px; }
+  .meal-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--mid); margin-bottom: 3px; }
+  .meal-val { font-size: 13px; color: var(--dark); }
+  .cal-badge {
+    display: inline-block;
+    background: var(--yellow);
+    color: var(--dark);
+    border-radius: 50px;
+    padding: 2px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+
+  /* ── RULE CARDS ── */
+  .rules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+  .rule-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    border-left: 4px solid var(--green);
+    transition: transform 0.2s;
+  }
+  .rule-card:hover { transform: translateX(4px); }
+  .rule-num { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--green-mid); margin-bottom: 6px; }
+  .rule-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--green); margin-bottom: 6px; }
+  .rule-body { font-size: 13px; color: var(--mid); }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: var(--green-light); }
+  .tl-item { position: relative; margin-bottom: 16px; }
+  .tl-dot {
+    position: absolute; left: -28px; top: 4px;
+    width: 16px; height: 16px;
+    background: var(--green);
+    border-radius: 50%;
+    border: 3px solid var(--white);
+    box-shadow: 0 0 0 2px var(--green);
+  }
+  .tl-time { font-size: 11px; font-weight: 600; color: var(--green); letter-spacing: 1px; margin-bottom: 2px; }
+  .tl-text { font-size: 13.5px; color: var(--dark); background: var(--white); padding: 8px 14px; border-radius: 8px; box-shadow: var(--shadow); }
+
+  /* ── SHOPPING ── */
+  .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 640px) { .shop-grid { grid-template-columns: 1fr; } }
+  .shop-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .shop-head {
+    background: var(--green);
+    color: var(--white);
+    padding: 14px 18px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .shop-head span { font-family: 'DM Sans', sans-serif; font-size: 11px; opacity: 0.8; display: block; margin-top: 2px; }
+  .shop-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 18px;
+    border-bottom: 1px solid #f0f4f0;
+    font-size: 13px;
+    gap: 8px;
+  }
+  .shop-item:last-child { border-bottom: none; }
+  .shop-item:nth-child(even) { background: var(--green-pale); }
+  .shop-name { font-weight: 500; }
+  .shop-qty { color: var(--green); font-weight: 600; font-size: 12px; white-space: nowrap; }
+
+  /* ── RECIPE CARDS ── */
+  .recipe-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .recipe-head {
+    background: linear-gradient(135deg, var(--green), #1b4332);
+    color: var(--white);
+    padding: 18px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .recipe-head h3 { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; }
+  .recipe-time { background: rgba(255,255,255,0.2); border-radius: 50px; padding: 3px 12px; font-size: 12px; }
+  .recipe-body { display: grid; grid-template-columns: 1fr 2fr; gap: 0; }
+  @media (max-width: 580px) { .recipe-body { grid-template-columns: 1fr; } }
+  .recipe-ingredients { padding: 18px 20px; background: var(--green-pale); border-right: 1px solid var(--green-light); }
+  .recipe-steps { padding: 18px 22px; }
+  .recipe-ingredients h4, .recipe-steps h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--green); margin-bottom: 12px; font-weight: 600; }
+  .recipe-ingredients ul { list-style: none; }
+  .recipe-ingredients li { font-size: 13px; padding: 4px 0; border-bottom: 1px dashed var(--green-light); color: var(--dark); }
+  .recipe-ingredients li:last-child { border-bottom: none; }
+  .recipe-ingredients li::before { content: '·'; color: var(--green); margin-right: 8px; font-weight: 700; }
+  .steps-list { list-style: none; counter-reset: steps; }
+  .steps-list li { counter-increment: steps; display: flex; gap: 12px; margin-bottom: 8px; font-size: 13px; }
+  .steps-list li::before {
+    content: counter(steps);
+    background: var(--green);
+    color: var(--white);
+    border-radius: 50%;
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .tip-box {
+    background: var(--yellow);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    margin-top: 12px;
+    color: var(--dark);
+  }
+  .tip-box strong { color: var(--orange); }
+
+  /* ── TRACKER ── */
+  .tracker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+  .tracker-week {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    text-align: center;
+  }
+  .tracker-week-num { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--mid); margin-bottom: 8px; }
+  .tracker-kg { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--green); font-weight: 700; }
+  .tracker-kg-label { font-size: 10px; color: var(--mid); }
+
+  /* ── PILLS ── */
+  .pill { display: inline-block; background: var(--green-light); color: var(--green); border-radius: 50px; padding: 3px 12px; font-size: 12px; font-weight: 500; margin: 2px; }
+  .pill-orange { background: #ffeee5; color: var(--orange); }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar { background: var(--green-light); border-radius: 50px; height: 8px; overflow: hidden; margin: 6px 0; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--green-mid)); border-radius: 50px; transition: width 1s ease; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    background: linear-gradient(135deg, var(--green-light), #b7e4c7);
+    border-left: 4px solid var(--green);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  .callout strong { color: var(--green); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--dark);
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    padding: 24px;
+    font-size: 12px;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-up { animation: fadeUp 0.5s ease forwards; }
+  section { opacity: 0; animation: fadeUp 0.5s ease forwards; }
+  section:nth-child(1) { animation-delay: 0.05s; }
+  section:nth-child(2) { animation-delay: 0.10s; }
+  section:nth-child(3) { animation-delay: 0.15s; }
+  section:nth-child(4) { animation-delay: 0.20s; }
+  section:nth-child(5) { animation-delay: 0.25s; }
+  section:nth-child(6) { animation-delay: 0.30s; }
+  section:nth-child(7) { animation-delay: 0.35s; }
+  section:nth-child(8) { animation-delay: 0.40s; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Personal Health Plan</div>
+  <h1>My Health Plan</h1>
+  <p>Diet · Movement · Better habits</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">1,800</div><div class="stat-lbl">Cal/day</div></div>
+    <div class="stat"><div class="stat-num">3×</div><div class="stat-lbl">Exercise/week</div></div>
+    <div class="stat"><div class="stat-num">8wk</div><div class="stat-lbl">Timeline</div></div>
+    <div class="stat"><div class="stat-num">3.5L</div><div class="stat-lbl">Water/day</div></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <ul>
+    <li><a href="#meals">Meal Plan</a></li>
+    <li><a href="#shopping">Shopping</a></li>
+    <li><a href="#recipes">Recipes</a></li>
+    <li><a href="#routine">Daily Routine</a></li>
+    <li><a href="#exercise">Exercise</a></li>
+    <li><a href="#sleep">Sleep</a></li>
+    <li><a href="#rules">Rules</a></li>
+    <li><a href="#tracker">Tracker</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+
+<!-- ── MEALS ── -->
+<section id="meals">
+  <div class="sec-header">
+    <div class="sec-icon">🥗</div>
+    <h2>Weekly Meal Plan</h2>
+  </div>
+  <div class="callout">
+    <strong>Every meal:</strong> protein + veg + 80g dry rice · Half lemon squeezed over · Use Rio Mare tin oil for cooking · 500g plain yogurt daily as snack · Target ~1,800 cal/day
+  </div>
+  <div class="meal-grid">
+
+    <div class="meal-card">
+      <div class="meal-card-head">Monday</div>
+      <div class="meal-card-body">
+        <div class="meal-row"><div class="meal-label">Breakfast</div><div class="meal-val">3 scrambled eggs + tomato + onion</div></div>
+        <div class="meal-row"><div class="meal-label">Lunch</div><div class="meal-val">2 tins Rio Mare + 80g rice + 180g frozen mixed veggies</div></div>
+        <div class="meal-row"><div class="meal-label">Dinner</div><div class="meal-val">150g chicken + 80g rice + 180g frozen broccoli + garlic</div></div>
+        <div class="meal-row"><div class="meal-label">Snack</div><div class="meal-val">500g plain yogurt</div></div>
+        <span class="cal-badge">~1,670 cal</span>
+        <span class="pill">Cook double rice for Tue</span>
+      </div>
+    </div>
+
+    <div class="meal-card">
+      <div class="meal-card-head">Tuesday</div>
+      <div class="meal-card-body">
+        <div class="meal-row"><div class="meal-label">Breakfast</div><div class="meal-val">50g oats + banana + splash milk</div></div>
+        <div class="meal-row"><div class="meal-label">Lunch</div><div class="meal-val">2 tins Rio Mare + leftover rice + 180g frozen spinach</div></div>
+        <div class="meal-row"><div class="meal-label">Dinner</div><div class="meal-val">2 eggs + 1 tin Rio Mare omelette + tomato + 100g zucchini</div></div>
+        <div class="meal-row"><div class="meal-label">Snack</div><div class="meal-val">500g plain yogurt</div></div>
+        <span class="cal-badge">~1,530 cal</span>
+        <span class="pill">Use Monday leftover rice</span>
+      </div>
+    </div>
+
+    <div class="meal-card">
+      <div class="meal-card-head">Wednesday</div>
+      <div class="meal-card-body">
+        <div class="meal-row"><div class="meal-label">Breakfast</div><div class="meal-val">3 boiled eggs + tomato + fresh spinach</div></div>
+        <div class="meal-row"><div class="meal-label">Lunch</div><div class="meal-val">2 tins Rio Mare + 80g rice + 180g frozen mixed veggies</div></div>
+        <div class="meal-row"><div class="meal-label">Dinner</div><div class="meal-val">150g chicken + 150g broccoli + 150g spinach stir fry</div></div>
+        <div class="meal-row"><div class="meal-label">Snack</div><div class="meal-val">500g yogurt + banana</div></div>
+        <span class="cal-badge">~1,670 cal</span>
+        <span class="pill pill-orange">Shop on way home</span>
+      </div>
+    </div>
+
+    <div class="meal-card">
+      <div class="meal-card-head">Thursday</div>
+      <div class="meal-card-body">
+        <div class="meal-row"><div class="meal-label">Breakfast</div><div class="meal-val">50g oats + 250g yogurt mixed together</div></div>
+        <div class="meal-row"><div class="meal-label">Lunch</div><div class="meal-val">Piadina + 1 tin Rio Mare + tomato + fresh spinach</div></div>
+        <div class="meal-row"><div class="meal-label">Dinner</div><div class="meal-val">150g chicken + 80g rice + 180g frozen broccoli + garlic</div></div>
+        <div class="meal-row"><div class="meal-label">Snack</div><div class="meal-val">Remaining 250g yogurt</div></div>
+        <span class="cal-badge">~1,470 cal</span>
+      </div>
+    </div>
+
+    <div class="meal-card">
+      <div class="meal-card-head">Friday</div>
+      <div class="meal-card-body">
+        <div class="meal-row"><div class="meal-label">Breakfast</div><div class="meal-val">3 scrambled eggs + tomato + onion</div></div>
+        <div class="meal-row"><div class="meal-label">Lunch</div><div class="meal-val">2 tins Rio Mare + 80g rice + 180g frozen mixed veggies</div></div>
+        <div class="meal-row"><div class="meal-label">Dinner</div><div class="meal-val">Chicken + rice + veggies — eat BEFORE going out</div></div>
+        <div class="meal-row"><div class="meal-label">Snack</div><div class="meal-val">500g plain yogurt</div></div>
+        <span class="cal-badge">~1,670 cal</span>
+        <span class="pill pill-orange">Eat before drinking!</span>
+      </div>
+    </div>
+
+    <div class="meal-card">
+      <div class="meal-card-head">Saturday</div>
+      <div class="meal-card-body">
+        <div class="meal-row"><div class="meal-label">Breakfast</div><div class="meal-val">500g yogurt + banana</div></div>
+        <div class="meal-row"><div class="meal-label">Lunch</div><div class="meal-val">Piadina + chicken + tomato + fresh spinach</div></div>
+        <div class="meal-row"><div class="meal-label">Dinner</div><div class="meal-val">2 tins Rio Mare + 80g rice + 200g zucchini + canned tomato</div></div>
+        <div class="meal-row"><div class="meal-label">Snack</div><div class="meal-val">Fruit or handful nuts</div></div>
+        <span class="cal-badge">~1,580 cal</span>
+        <span class="pill">Meal prep afternoon</span>
+      </div>
+    </div>
+
+    <div class="meal-card">
+      <div class="meal-card-head">Sunday</div>
+      <div class="meal-card-body">
+        <div class="meal-row"><div class="meal-label">Breakfast</div><div class="meal-val">3 boiled eggs + tomato + fresh spinach</div></div>
+        <div class="meal-row"><div class="meal-label">Lunch</div><div class="meal-val">Big bowl: 80g rice + 150g chicken + 150g broccoli + 150g veggies</div></div>
+        <div class="meal-row"><div class="meal-label">Dinner</div><div class="meal-val">2 tins Rio Mare + 80g rice + 200g zucchini + canned tomato</div></div>
+        <div class="meal-row"><div class="meal-label">Snack</div><div class="meal-val">500g plain yogurt</div></div>
+        <span class="cal-badge">~1,660 cal</span>
+        <span class="pill">Early sleep tonight</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── SHOPPING ── -->
+<section id="shopping">
+  <div class="sec-header">
+    <div class="sec-icon">🛒</div>
+    <h2>Shopping List</h2>
+  </div>
+  <div class="callout">
+    <strong>Shop twice a week on the way home from work.</strong> Reminders set on your phone for 7:10pm. Wednesday tops up Mon–Thu. Friday covers the weekend.
+  </div>
+
+  <div class="shop-grid">
+    <div class="shop-card">
+      <div class="shop-head">Wednesday Shop
+        <span>Mon–Thu top up · ~€16–20</span>
+      </div>
+      <div class="shop-item"><span class="shop-name">Eggs</span><span class="shop-qty">10 eggs</span></div>
+      <div class="shop-item"><span class="shop-name">Chicken breast</span><span class="shop-qty">300g</span></div>
+      <div class="shop-item"><span class="shop-name">Rio Mare tuna (65g)</span><span class="shop-qty">9 tins</span></div>
+      <div class="shop-item"><span class="shop-name">Tomatoes (fresh)</span><span class="shop-qty">6 medium</span></div>
+      <div class="shop-item"><span class="shop-name">Onions</span><span class="shop-qty">3 medium</span></div>
+      <div class="shop-item"><span class="shop-name">Lemons</span><span class="shop-qty">2</span></div>
+      <div class="shop-item"><span class="shop-name">Bananas</span><span class="shop-qty">3</span></div>
+      <div class="shop-item"><span class="shop-name">Canned tomatoes</span><span class="shop-qty">2 cans</span></div>
+      <div class="shop-item"><span class="shop-name">Yogurt 500g plain</span><span class="shop-qty">4 pots</span></div>
+      <div class="shop-item"><span class="shop-name">Frozen spinach</span><span class="shop-qty">1 bag (500g)</span></div>
+      <div class="shop-item"><span class="shop-name">Frozen mixed veggies</span><span class="shop-qty">1 bag if low</span></div>
+      <div class="shop-item"><span class="shop-name">Frozen broccoli</span><span class="shop-qty">1 bag if low</span></div>
+      <div class="shop-item"><span class="shop-name">Oats</span><span class="shop-qty">1 bag if low</span></div>
+      <div class="shop-item"><span class="shop-name">Garlic</span><span class="shop-qty">1 bulb if low</span></div>
+    </div>
+
+    <div class="shop-card">
+      <div class="shop-head">Friday Shop
+        <span>Weekend supply · ~€22–28</span>
+      </div>
+      <div class="shop-item"><span class="shop-name">Eggs</span><span class="shop-qty">8 eggs</span></div>
+      <div class="shop-item"><span class="shop-name">Chicken breast</span><span class="shop-qty">300g</span></div>
+      <div class="shop-item"><span class="shop-name">Rio Mare tuna (65g)</span><span class="shop-qty">7 tins</span></div>
+      <div class="shop-item"><span class="shop-name">Piadina wraps</span><span class="shop-qty">3 wraps</span></div>
+      <div class="shop-item"><span class="shop-name">Tomatoes (fresh)</span><span class="shop-qty">4 medium</span></div>
+      <div class="shop-item"><span class="shop-name">Onions</span><span class="shop-qty">2 medium</span></div>
+      <div class="shop-item"><span class="shop-name">Lemons</span><span class="shop-qty">2</span></div>
+      <div class="shop-item"><span class="shop-name">Bananas</span><span class="shop-qty">3</span></div>
+      <div class="shop-item"><span class="shop-name">Canned tomatoes</span><span class="shop-qty">2 cans</span></div>
+      <div class="shop-item"><span class="shop-name">Yogurt 500g plain</span><span class="shop-qty">3 pots</span></div>
+      <div class="shop-item"><span class="shop-name">Fresh spinach bag</span><span class="shop-qty">1 bag (~150g)</span></div>
+      <div class="shop-item"><span class="shop-name">Zucchini (fresh)</span><span class="shop-qty">3 medium</span></div>
+      <div class="shop-item"><span class="shop-name">Frozen mixed veggies</span><span class="shop-qty">1 large bag</span></div>
+      <div class="shop-item"><span class="shop-name">Rice 1kg</span><span class="shop-qty">1 bag if low</span></div>
+      <div class="shop-item"><span class="shop-name">Sparkling water</span><span class="shop-qty">4 large bottles</span></div>
+      <div class="shop-item"><span class="shop-name">Light beer (optional)</span><span class="shop-qty">Max 4–6 cans</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="card-title">🥚 Weekly Egg & Tuna Count</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Day</th><th>Eggs</th><th>Rio Mare tins</th><th>Which meals</th></tr></thead>
+        <tbody>
+          <tr><td>Monday</td><td>3</td><td>2</td><td>Scrambled breakfast · Tuna rice lunch</td></tr>
+          <tr><td>Tuesday</td><td>2</td><td>3</td><td>Oats breakfast · Tuna rice lunch (2) · Egg+tuna omelette dinner (1)</td></tr>
+          <tr><td>Wednesday</td><td>3</td><td>2</td><td>Boiled breakfast · Tuna rice lunch</td></tr>
+          <tr><td>Thursday</td><td>0</td><td>1</td><td>Oats+yogurt breakfast · Piadina+tuna lunch</td></tr>
+          <tr><td>Friday</td><td>3</td><td>2</td><td>Scrambled breakfast · Tuna rice lunch</td></tr>
+          <tr><td>Saturday</td><td>0</td><td>2</td><td>Yogurt breakfast · Tuna rice dinner</td></tr>
+          <tr><td>Sunday</td><td>3</td><td>2</td><td>Boiled breakfast · Tuna rice dinner</td></tr>
+          <tr style="background:#d8f3dc;font-weight:600"><td>TOTAL</td><td>14 eggs</td><td>16 tins</td><td>Buy 10 Wed + 8 Fri · Buy 9 tins Wed + 7 Fri</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── RECIPES ── -->
+<section id="recipes">
+  <div class="sec-header">
+    <div class="sec-icon">👨‍🍳</div>
+    <h2>Cooking Instructions</h2>
+  </div>
+  <div class="callout">All recipes designed for after a long work day. Max 15–18 minutes each. Key tip for every dish included.</div>
+
+  <div class="recipe-card">
+    <div class="recipe-head"><h3>Scrambled Eggs</h3><span class="recipe-time">⏱ 8 min · Mon & Fri breakfast</span></div>
+    <div class="recipe-body">
+      <div class="recipe-ingredients"><h4>Ingredients</h4><ul>
+        <li>3 eggs</li><li>1 tomato, diced</li><li>½ onion, diced</li><li>1 tsp Rio Mare or olive oil</li><li>Salt + pepper</li><li>½ lemon (optional)</li>
+      </ul></div>
+      <div class="recipe-steps"><h4>Steps</h4><ol class="steps-list">
+        <li>Heat pan on medium — add oil, let warm</li>
+        <li>Add diced onion — stir 2 min until soft</li>
+        <li>Add diced tomato — stir 1 min</li>
+        <li>Crack 3 eggs directly in — stir gently pulling from edges to middle</li>
+        <li>Take off heat when just set — still slightly wet</li>
+        <li>Season salt + pepper · squeeze lemon if you like</li>
+      </ol>
+      <div class="tip-box"><strong>Key tip:</strong> Medium heat only — high heat makes eggs rubbery. Take off heat while slightly wet — residual heat finishes them.</div></div>
+    </div>
+  </div>
+
+  <div class="recipe-card">
+    <div class="recipe-head"><h3>Tuna Rice Bowl</h3><span class="recipe-time">⏱ 15 min · Mon/Tue/Wed/Fri/Sun lunch</span></div>
+    <div class="recipe-body">
+      <div class="recipe-ingredients"><h4>Ingredients</h4><ul>
+        <li>2 tins Rio Mare (65g each)</li><li>80g dry rice</li><li>180g frozen veggies or spinach</li><li>1–2 garlic cloves</li><li>½ lemon</li><li>Salt + pepper</li>
+      </ul></div>
+      <div class="recipe-steps"><h4>Steps</h4><ol class="steps-list">
+        <li>Rice: 80g + 200ml water + pinch salt — boil then low heat, lid on, 12 min</li>
+        <li>Open tuna tins — pour the oil into pan</li>
+        <li>Heat tuna oil medium — add crushed garlic — 1 min</li>
+        <li>Add frozen veggies straight from bag — stir 4–5 min</li>
+        <li>Add tuna — break up with fork — warm 1–2 min</li>
+        <li>Plate rice, veggies + tuna on top, squeeze lemon over everything</li>
+      </ol>
+      <div class="tip-box"><strong>Key tip:</strong> Use the Rio Mare oil instead of adding extra — saves ~40 cal and tastes better. Cook double rice and refrigerate — next day's lunch ready in 5 min.</div></div>
+    </div>
+  </div>
+
+  <div class="recipe-card">
+    <div class="recipe-head"><h3>Chicken + Rice + Broccoli</h3><span class="recipe-time">⏱ 18 min · Mon/Thu/Fri dinner</span></div>
+    <div class="recipe-body">
+      <div class="recipe-ingredients"><h4>Ingredients</h4><ul>
+        <li>150g chicken breast</li><li>80g dry rice</li><li>180g frozen broccoli</li><li>1–2 garlic cloves</li><li>½ lemon</li><li>1 tsp oil · salt + pepper</li>
+      </ul></div>
+      <div class="recipe-steps"><h4>Steps</h4><ol class="steps-list">
+        <li>Start rice: 80g + 200ml water — boil then low heat lid on 12 min</li>
+        <li>Season chicken both sides with salt + pepper</li>
+        <li>Heat pan medium-high + 1 tsp oil</li>
+        <li>Add chicken — DO NOT move it for 3–4 min (forms golden crust)</li>
+        <li>Flip — cook 3–4 min other side — rest on plate</li>
+        <li>Same pan: garlic 30 sec — add frozen broccoli — stir 4–5 min</li>
+        <li>Plate: rice + broccoli + sliced chicken on top + lemon squeeze</li>
+      </ol>
+      <div class="tip-box"><strong>Key tip:</strong> Do NOT move chicken in first 3–4 min — this creates the golden crust. Moving it makes it stick and go grey. Rest 2 min before cutting.</div></div>
+    </div>
+  </div>
+
+  <div class="recipe-card">
+    <div class="recipe-head"><h3>Chicken Stir Fry</h3><span class="recipe-time">⏱ 12 min · Wednesday dinner</span></div>
+    <div class="recipe-body">
+      <div class="recipe-ingredients"><h4>Ingredients</h4><ul>
+        <li>150g chicken, sliced thin</li><li>150g frozen broccoli</li><li>150g frozen spinach</li><li>1–2 garlic cloves</li><li>1 tsp oil · ½ lemon</li><li>Salt + pepper</li>
+      </ul></div>
+      <div class="recipe-steps"><h4>Steps</h4><ol class="steps-list">
+        <li>Slice chicken into thin strips — thin cooks faster</li>
+        <li>Heat pan or wok on HIGH heat + 1 tsp oil</li>
+        <li>Add garlic — 30 sec stirring constantly</li>
+        <li>Add chicken strips — stir fry moving constantly 3–4 min</li>
+        <li>Add frozen broccoli — stir fry 3 min</li>
+        <li>Add frozen spinach blocks — break up — 2–3 min</li>
+        <li>Squeeze lemon over — season — serve immediately</li>
+      </ol>
+      <div class="tip-box"><strong>Key tip:</strong> HIGH heat for stir fry — medium heat steams instead of fries. You want the sizzle. Keep everything moving constantly.</div></div>
+    </div>
+  </div>
+
+  <div class="recipe-card">
+    <div class="recipe-head"><h3>Egg + Tuna Omelette</h3><span class="recipe-time">⏱ 12 min · Tuesday dinner</span></div>
+    <div class="recipe-body">
+      <div class="recipe-ingredients"><h4>Ingredients</h4><ul>
+        <li>2 eggs</li><li>1 tin Rio Mare (65g)</li><li>1 tomato, diced</li><li>½ onion, diced</li><li>100g zucchini, sliced thin</li><li>1 tsp oil · salt + pepper</li>
+      </ul></div>
+      <div class="recipe-steps"><h4>Steps</h4><ol class="steps-list">
+        <li>Heat pan medium + tsp oil — add onion 2 min</li>
+        <li>Add zucchini slices — 2–3 min until slightly golden</li>
+        <li>Add diced tomato — 1 min — add tuna — break up — 1 min</li>
+        <li>Beat 2 eggs with salt + pepper — pour over everything</li>
+        <li>Let set on bottom 2 min without stirring</li>
+        <li>Fold in half — 1 more min — slide onto plate</li>
+      </ol>
+      <div class="tip-box"><strong>Key tip:</strong> If omelette breaks when folding — doesn't matter. Just mix it all together like a scramble. Tastes identical.</div></div>
+    </div>
+  </div>
+
+  <div class="recipe-card" style="border: 2px solid var(--green)">
+    <div class="recipe-head" style="background: linear-gradient(135deg,#1b4332,#2d6a4f)"><h3>Saturday Meal Prep</h3><span class="recipe-time">⏱ 25 min · Do once a week</span></div>
+    <div class="recipe-body">
+      <div class="recipe-ingredients"><h4>What you need</h4><ul>
+        <li>400–500g chicken breast</li><li>200g dry rice</li><li>Airtight containers x2</li><li>Check: eggs, tins, frozen veg</li>
+      </ul></div>
+      <div class="recipe-steps"><h4>Steps</h4><ol class="steps-list">
+        <li>Season all chicken with salt + pepper</li>
+        <li>Cook all chicken — 4 min each side without moving</li>
+        <li>Cool completely — slice — store in fridge up to 4 days</li>
+        <li>Cook 200g rice + 500ml water — 12 min — cool completely</li>
+        <li>Store rice in fridge in container — lasts 4 days</li>
+        <li>Count tuna tins, check egg count, check freezer levels</li>
+        <li>Write Wednesday shopping list for anything running low</li>
+      </ol>
+      <div class="tip-box"><strong>Why this saves the week:</strong> Monday and Tuesday meals ready in 5 min. No cooking decisions when tired after work. <strong>Cool completely before refrigerating</strong> — warm food in fridge spoils everything faster.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ROUTINE ── -->
+<section id="routine">
+  <div class="sec-header">
+    <div class="sec-icon">📅</div>
+    <h2>Daily Routine</h2>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+    <div class="card">
+      <div class="card-title">Monday – Thursday</div>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">7:00am</div><div class="tl-text">Wake up + 500ml water immediately</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">7:15am</div><div class="tl-text">Breakfast — eggs or oats</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">7:45am</div><div class="tl-text">Black coffee (1st cup)</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">8:50am</div><div class="tl-text">Walk to work (10 min)</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">1:00pm</div><div class="tl-text">Last coffee of the day</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">1:30pm</div><div class="tl-text">Lunch + drink water first</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">1:50pm</div><div class="tl-text">Short lunchtime walk — 10 min outside</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">4:00pm</div><div class="tl-text">Afternoon water top up</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">7:00pm</div><div class="tl-text">Walk home (10 min)</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">7:30pm</div><div class="tl-text">Cook dinner — drink water first</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">8:00pm</div><div class="tl-text">20 min walk after dinner</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">8:30pm</div><div class="tl-text">Exercise Mon/Wed/Fri — 15 min</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">8:50pm</div><div class="tl-text">Shower</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">9:00pm</div><div class="tl-text">No more food after this</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">10:00pm</div><div class="tl-text">Stop screens — white noise on — earplugs in</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">11:00pm</div><div class="tl-text">Sleep — phone on Do Not Disturb</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">Friday</div>
+        <div class="timeline">
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">7:00am</div><div class="tl-text">Wake up + 500ml water</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">7:30pm</div><div class="tl-text">Eat full dinner BEFORE going out</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">Evening</div><div class="tl-text">Max 2–3 × 650ml beers — alternate with sparkling water</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">1:00am</div><div class="tl-text">Sleep</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Weekend Water Plan</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>When</th><th>Amount</th></tr></thead>
+            <tbody>
+              <tr><td>Wake up</td><td>500ml</td></tr>
+              <tr><td>Before lunch</td><td>500ml</td></tr>
+              <tr><td>Afternoon</td><td>500ml</td></tr>
+              <tr><td>Before dinner</td><td>500ml</td></tr>
+              <tr><td>Evening</td><td>500ml</td></tr>
+              <tr><td><strong>Total</strong></td><td><strong>2.5L + coffee + tea = 3L+</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── EXERCISE ── -->
+<section id="exercise">
+  <div class="sec-header">
+    <div class="sec-icon">💪</div>
+    <h2>Exercise Plan</h2>
+  </div>
+  <div class="callout"><strong>Monday, Wednesday, Friday</strong> after dinner. 15 minutes. No equipment. 3 rounds.</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Exercise</th><th>Reps</th><th>How to do it</th><th>Rest after</th></tr></thead>
+      <tbody>
+        <tr><td>Squats</td><td>15</td><td>Feet shoulder width, lower until thighs parallel to floor, stand back up</td><td>30 sec</td></tr>
+        <tr><td>Push ups</td><td>10</td><td>Knees on floor is fine to start — hands shoulder width, lower chest to floor</td><td>30 sec</td></tr>
+        <tr><td>Plank</td><td>30 sec</td><td>Elbows on floor, body straight like a board, hold still, breathe</td><td>30 sec</td></tr>
+        <tr><td>Walking on spot</td><td>1 min</td><td>Lift knees high, swing arms — gets heart rate up</td><td>1 min between rounds</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="margin-top:20px" class="table-wrap">
+    <table>
+      <thead><tr><th>Walk</th><th>When</th><th>Duration</th><th>Benefit</th></tr></thead>
+      <tbody>
+        <tr><td>Walk to/from work</td><td>Every day</td><td>10 min each way = 20 min daily</td><td>Already doing this — keep it up</td></tr>
+        <tr><td>After dinner walk</td><td>Mon/Wed/Fri minimum</td><td>20 min at easy pace</td><td>Aids digestion, helps sleep, burns cal</td></tr>
+        <tr><td>Lunchtime walk</td><td>When possible</td><td>10–15 min outside</td><td>Breaks up the work day</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── SLEEP ── -->
+<section id="sleep">
+  <div class="sec-header">
+    <div class="sec-icon">🌙</div>
+    <h2>Sleep Fix Plan</h2>
+  </div>
+  <div class="callout"><strong>Why sleep matters:</strong> Poor sleep spikes cortisol, increases hunger hormones and stalls fat loss. Consistent sleep timing is one of the most underrated tools for weight loss.</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Phase</th><th>Target</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td>Week 1</td><td>No coffee after 1pm · Eat by 7:30pm</td><td>These two changes improve sleep quality significantly</td></tr>
+        <tr><td>Week 2</td><td>11:30pm sleep with white noise + earplugs</td><td>Download Rain Rain app (free) or YouTube white noise 8hrs. Earplugs ~€2 from pharmacy</td></tr>
+        <tr><td>Week 3</td><td>Push to 11pm · Reduce Friday beer</td><td>Alcohol fragments sleep cycles badly — less beer = better sleep even on weekends</td></tr>
+        <tr><td>Month 2</td><td>Solid 11pm → 7am block Mon–Thu</td><td>By now habits are building — sleep should be improving naturally</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="table-wrap" style="margin-top:16px">
+    <table>
+      <thead><tr><th>Night</th><th>Sleep</th><th>Wake</th><th>Hours</th></tr></thead>
+      <tbody>
+        <tr><td>Mon–Thu</td><td>11:00pm</td><td>7:00am</td><td>8 hours solid</td></tr>
+        <tr><td>Friday</td><td>1:00am</td><td>9:00am</td><td>8 hours solid</td></tr>
+        <tr><td>Saturday</td><td>1:00am</td><td>9:00am</td><td>8 hours solid</td></tr>
+        <tr><td>Sunday</td><td>10:30pm</td><td>7:00am</td><td>8.5 hours — back to week routine</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── RULES ── -->
+<section id="rules">
+  <div class="sec-header">
+    <div class="sec-icon">📌</div>
+    <h2>The 7 Rules</h2>
+  </div>
+  <div class="callout">Read these every Monday morning. Print them. Put them on the wall.</div>
+  <div class="rules-grid">
+    <div class="rule-card"><div class="rule-num">Rule 1</div><div class="rule-title">Eat</div><div class="rule-body">~1,800 cal per day. Protein at every meal. Plain yogurt daily. Rice at 80g dry per portion.</div></div>
+    <div class="rule-card"><div class="rule-num">Rule 2</div><div class="rule-title">Drink</div><div class="rule-body">3+ litres water daily. Coffee before 1pm only. No sugary drinks. Sparkling water evenings.</div></div>
+    <div class="rule-card"><div class="rule-num">Rule 3</div><div class="rule-title">Sleep</div><div class="rule-body">11pm target Mon–Thu. White noise app + earplugs. Phone on Do Not Disturb every night.</div></div>
+    <div class="rule-card"><div class="rule-num">Rule 4</div><div class="rule-title">Walk</div><div class="rule-body">20 min after dinner at least 3× per week. Already doing 10 min to/from work — keep it.</div></div>
+    <div class="rule-card"><div class="rule-num">Rule 5</div><div class="rule-title">Exercise</div><div class="rule-body">15 min home routine Mon/Wed/Fri — squats ×15, push ups ×10, plank 30s, walk on spot 1 min. 3 rounds.</div></div>
+    <div class="rule-card"><div class="rule-num">Rule 6</div><div class="rule-title">Beer</div><div class="rule-body">Friday only. Max 2–3 × 650ml. Always eat a full dinner first. Alternate each beer with sparkling water.</div></div>
+    <div class="rule-card"><div class="rule-num">Rule 7</div><div class="rule-title">Consistency</div><div class="rule-body">80% is enough. One bad day does not ruin the week. Do not quit. Keep going no matter what.</div></div>
+  </div>
+</section>
+
+<!-- ── TRACKER ── -->
+<section id="tracker">
+  <div class="sec-header">
+    <div class="sec-icon">📊</div>
+    <h2>Progress Tracker</h2>
+  </div>
+  <div class="callout"><strong>Weigh in every Saturday morning</strong> before eating, same time each week. Track your progress consistently.</div>
+  <div class="tracker-grid" id="tracker-grid"></div>
+  <div class="card" style="margin-top:24px">
+    <div class="card-title">Weekly Habits</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Habit</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th></tr></thead>
+        <tbody>
+          <tr><td>500ml water on waking</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Ate to plan (80%+)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>No coffee after 1pm</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Drank 3L+ water</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>20 min walk after dinner</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Exercise (Mon/Wed/Fri)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>In bed by 11pm (Mon–Thu)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Beer limit kept</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  Built with intention
+</footer>
+
+<script>
+// Build tracker grid
+const grid = document.getElementById('tracker-grid');
+for (let i = 1; i <= 12; i++) {
+  const card = document.createElement('div');
+  card.className = 'tracker-week';
+  card.innerHTML = `
+    <div class="tracker-week-num">Week ${i}</div>
+    <div class="tracker-kg" contenteditable="true" style="outline:none;cursor:text" title="Click to enter weight">—</div>
+    <div class="tracker-kg-label">kg</div>`;
+  grid.appendChild(card);
+}
+
+// Save tracker to localStorage
+grid.addEventListener('input', () => {
+  const vals = [...grid.querySelectorAll('.tracker-kg')].map(el => el.textContent);
+  localStorage.setItem('tracker', JSON.stringify(vals));
+});
+const saved = localStorage.getItem('tracker');
+if (saved) {
+  const vals = JSON.parse(saved);
+  [...grid.querySelectorAll('.tracker-kg')].forEach((el, i) => { if (vals[i]) el.textContent = vals[i]; });
+}
+
+// Active nav highlight
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('nav a');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'));
+      const link = document.querySelector(`nav a[href="#${e.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
